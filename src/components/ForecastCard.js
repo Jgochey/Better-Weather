@@ -7,14 +7,43 @@ import Card from 'react-bootstrap/Card';
 import Link from 'next/link';
 // import { Dropdown } from 'react-bootstrap';
 
-export default function ForecastCard({ ForecastObj, ObjId }) {
+// const userId = firebaseKey-- The userId used for CRUD should be pulled from the user's firebaseId.
+
+export default function ForecastCard({ UserId, forecastObj, LocationName, LocationType }) {
   return (
     <div>
-      <Link href={`/SavedLocations/${ForecastObj.id}`} passHref>
+      <Link href={`/SavedLocations/${UserId}`} passHref>
         <Button variant="primary" className="m-2">
           View Saved Locations
         </Button>
       </Link>
+
+      <div>
+        <h1>Forecast Data</h1>
+        <ul>
+          <Card style={{ width: '18rem', margin: '10px' }}>
+            <Card.Body>
+              {forecastObj.map((forecast) => (
+                <li key={forecast.id}>
+                  <Card.Title>
+                    <p>Location Name: {LocationName}</p>
+                    <p>Location Type: {LocationType}</p>
+                  </Card.Title>
+
+                  {/* Rendering individual forecast properties instead of the whole object */}
+                  <p>Date: {forecast.date}</p>
+                  <p>Temperature: {forecast.temperature}°C</p>
+                  <p>Humidity: {forecast.humidity}%</p>
+                  <p>Chance of Rain: {forecast.chance_of_rain}%</p>
+                  <p>
+                    Icon: <img src={forecast.icon} alt="weather icon" />
+                  </p>
+                </li>
+              ))}
+            </Card.Body>
+          </Card>
+        </ul>
+      </div>
 
       {/* Saved Locations Dropdown Menu goes here */}
       {/* <Dropdown>
@@ -40,73 +69,23 @@ export default function ForecastCard({ ForecastObj, ObjId }) {
       </Dropdown.Menu>
     </Dropdown>
  */}
-
-      <Card style={{ width: '18rem', margin: '10px' }}>
-        <Card.Body>
-          <Card.Title>
-            {ForecastObj[ObjId]}
-            {/* {ForecastObj[ObjId].location_type} */}
-          </Card.Title>
-
-          {/* <Image> {ForecastObj[ObjId].icon} </Image> */}
-
-          <p className="card-text bold">
-            {/* {ForecastObj.temperature}
-          {ForecastObj.humidity}
-          {ForecastObj.chance_of_rain} */}
-          </p>
-        </Card.Body>
-      </Card>
     </div>
   );
 }
 
 ForecastCard.propTypes = {
-  // ForecastObj: PropTypes.shape({
-  //   location_id: PropTypes.number,
-  //   temperature: PropTypes.number,
-  //   humidity: PropTypes.number,
-  //   chance_of_rain: PropTypes.number,
-  //   // firebaseKey: PropTypes.string,
-  // }).isRequired,
-  // onUpdate: PropTypes.func.isRequired,
-
-  ForecastObj: PropTypes.shape({
-    location_id: PropTypes.number,
-    temperature: PropTypes.number,
-    humidity: PropTypes.number,
-    chance_of_rain: PropTypes.number,
-    name: PropTypes.string,
-    location_type: PropTypes.number,
-    icon: PropTypes.string,
-
-    default_location: PropTypes.number,
-    id: PropTypes.number,
-    username: PropTypes.string,
-    locations: PropTypes.arrayOf(
-      PropTypes.shape({
-        // Not sure if this is right, there might be one more "layer" of nested data to go through to get the proper data inside of the location.
-        location_id: PropTypes.number,
-        temperature: PropTypes.number,
-        humidity: PropTypes.number,
-        chance_of_rain: PropTypes.number,
-        // firebaseKey: PropTypes.string,
-      }),
-    ),
-  }).isRequired,
-
-  ObjId: PropTypes.arrayOf(
+  forecastObj: PropTypes.arrayOf(
     PropTypes.shape({
-      // Not sure if this is right, there might be one more "layer" of nested data to go through to get the proper data inside of the location.
+      podcastId: PropTypes.number,
       id: PropTypes.number,
-      location_type: PropTypes.number,
-      name: PropTypes.string,
-      set_default_location: PropTypes.bool,
-      show_humidity: PropTypes.bool,
-      show_chance_of_rain: PropTypes.bool,
-      userId: PropTypes.number,
-      zipcode: PropTypes.string,
+      date: PropTypes.string,
+      temperature: PropTypes.number,
+      humidity: PropTypes.number,
+      chance_of_rain: PropTypes.number,
+      icon: PropTypes.string,
     }),
-  ),
-  // uid: PropTypes.number.isRequired,
+  ).isRequired,
+  UserId: PropTypes.string.isRequired,
+  LocationName: PropTypes.string.isRequired,
+  LocationType: PropTypes.number.isRequired,
 };

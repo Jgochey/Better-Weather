@@ -3,8 +3,12 @@ import React from 'react';
 import Link from 'next/link';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 import { signOut } from '../utils/auth';
+import { useAuth } from '../utils/context/authContext';
 
 export default function NavBar() {
+  const { user } = useAuth();
+  const UserId = user.uid;
+
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
@@ -22,7 +26,7 @@ export default function NavBar() {
             <Link className="nav-link" href="/Forecasts">
               Forecast
             </Link>
-            <Link className="nav-link" href="/SavedLocations">
+            <Link className="nav-link" href={`/SavedLocations/${UserId}`}>
               Saved Locations
             </Link>
             <Link className="nav-link" href="/NewForecastLocation">

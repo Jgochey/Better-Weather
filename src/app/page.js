@@ -6,10 +6,10 @@ import { Button } from 'react-bootstrap';
 import { signOut } from '@/utils/auth'; // anything in the src dir, you can use the @ instead of relative paths
 import { useAuth } from '@/utils/context/authContext';
 import { useEffect, useState } from 'react';
+// import { Card } from 'react-bootstrap';
 import { getUserLocations } from '../api/userData';
 // import ForecastCard from '../components/ForecastCard';
 // import Selector from '../components/Selector';
-// import { Card } from 'react-bootstrap';
 import { getForecastsAlternate } from '../api/forecastData';
 
 // import { getUser } from '../api/userData';
@@ -100,18 +100,18 @@ function Home() {
         <ul>
           {forecasts.map((forecast) => (
             <li key={forecast.id}>
-                {/* Rendering individual forecast properties instead of the whole object */}
-                <p>Date: {forecast.date}</p>
-                <p>Temperature: {forecast.temperature}°C</p>
-                <p>Humidity: {forecast.humidity}%</p>
-                <p>Chance of Rain: {forecast.chance_of_rain}%</p>
-                <p>
-                  Icon: <img src={forecast.icon} alt="weather icon" />
-                </p>
+              {/* Rendering individual forecast properties instead of the whole object */}
+              <p>Date: {forecast.date}</p>
+              <p>Temperature: {forecast.temperature}°C</p>
+              <p>Humidity: {forecast.humidity}%</p>
+              <p>Chance of Rain: {forecast.chance_of_rain}%</p>
+              <p>
+                Icon: <img src={forecast.icon} alt="weather icon" />
+              </p>
 
-                <p>Location Name: {currentLocationName}</p>
-                <p>Location Type: {currnetLocationType}</p>
-              </li>
+              <p>Location Name: {currentLocationName}</p>
+              <p>Location Type: {currnetLocationType}</p>
+            </li>
           ))}
         </ul>
       </div>
