@@ -3,13 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/utils/context/authContext';
 import { Button, Card } from 'react-bootstrap';
-import { getUserLocations } from '../../api/userData';
+import Link from 'next/link';
+import { getUserLocations } from '../../../api/userData';
 
 function SavedLocationsPage() {
   const { user } = useAuth();
   const [locations, setLocations] = useState([]);
-
-  // console.log(user);
 
   const setUserLocations = () => {
     getUserLocations(user.uid).then(setLocations);
@@ -18,7 +17,7 @@ function SavedLocationsPage() {
 
   useEffect(() => {
     setUserLocations();
-  }, []);
+  }, [user.uid]);
 
   return (
     <div
@@ -30,17 +29,29 @@ function SavedLocationsPage() {
         margin: '0 auto',
       }}
     >
-      {/* Saved Locations Page */}
+      {/* <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={setUserLocations}>
+        Test Locations
+      </Button>
+
+      <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={setUserLocations}>
+        Add New Forecast Location
+      </Button> */}
+
+      <Link href="/Forecasts" passHref>
+        <Button variant="primary" className="m-2">
+          Return to Forecast
+        </Button>
+      </Link>
 
       <Card>
+        <p> Coming Soon </p>
+
         <div>
-          {locations.map((location) => (
+          {Object.values(locations).map((location) => (
             <div key={location.id}>
               <h3>{location.name}</h3>
               <Button> Edit </Button>
               <Button> Delete </Button>
-
-              {/* You can display other properties here as needed */}
             </div>
           ))}
         </div>

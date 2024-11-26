@@ -74,4 +74,45 @@ const getSingleLocation = (userId, locationId) =>
       .catch(reject);
   });
 
-export { checkUser, registerUser, getUser, getUserLocations, getSingleLocation };
+const deleteSingleLocation = (userId, locationId) =>
+  new Promise((resolve, reject) => {
+    fetch(`${clientCredentials.databaseURL}/users/${userId}/locations/${locationId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => resolve(data))
+      .catch(reject);
+  });
+
+const createLocation = (userId, payload) =>
+  new Promise((resolve, reject) => {
+    fetch(`${clientCredentials.databaseURL}/users/${userId}/locations`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((data) => resolve(data))
+      .catch(reject);
+  });
+
+const updateLocation = (userId, locationId, payload) =>
+  new Promise((resolve, reject) => {
+    fetch(`${clientCredentials.databaseURL}/users/${userId}/locations/${locationId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then(resolve)
+      .catch(reject);
+  });
+
+export { checkUser, registerUser, getUser, getUserLocations, getSingleLocation, updateLocation, deleteSingleLocation, createLocation };
