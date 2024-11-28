@@ -61,9 +61,9 @@ const registerUser = (userInfo) =>
       .catch(reject);
   });
 
-const getSingleLocation = (userId, locationId) =>
+const getSingleLocation = (userId, firebaseKey) =>
   new Promise((resolve, reject) => {
-    fetch(`${clientCredentials.databaseURL}/users/${userId}/locations/${locationId}`, {
+    fetch(`${clientCredentials.databaseURL}/users/${userId}/locations/${firebaseKey}.json`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -74,9 +74,9 @@ const getSingleLocation = (userId, locationId) =>
       .catch(reject);
   });
 
-const deleteSingleLocation = (userId, locationId) =>
+const deleteSingleLocation = (userId, firebaseKey) =>
   new Promise((resolve, reject) => {
-    fetch(`${clientCredentials.databaseURL}/users/${userId}/locations/${locationId}`, {
+    fetch(`${clientCredentials.databaseURL}/users/${userId}/locations/${firebaseKey}.json`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ const deleteSingleLocation = (userId, locationId) =>
 
 const createLocation = (userId, payload) =>
   new Promise((resolve, reject) => {
-    fetch(`${clientCredentials.databaseURL}/users/${userId}/locations`, {
+    fetch(`${clientCredentials.databaseURL}/users/${userId}/locations.json`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -101,9 +101,9 @@ const createLocation = (userId, payload) =>
       .catch(reject);
   });
 
-const updateLocation = (userId, locationId, payload) =>
+const updateLocation = (userId, firebaseKey, payload) =>
   new Promise((resolve, reject) => {
-    fetch(`${clientCredentials.databaseURL}/users/${userId}/locations/${locationId}`, {
+    fetch(`${clientCredentials.databaseURL}/users/${userId}/locations/${firebaseKey}.json`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -115,4 +115,17 @@ const updateLocation = (userId, locationId, payload) =>
       .catch(reject);
   });
 
-export { checkUser, registerUser, getUser, getUserLocations, getSingleLocation, updateLocation, deleteSingleLocation, createLocation };
+const getLocationTypes = () =>
+  new Promise((resolve, reject) => {
+    fetch(`${clientCredentials.databaseURL}/location_types.json`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => resolve(Object.values(data)))
+      .catch(reject);
+  });
+
+export { checkUser, registerUser, getUser, getUserLocations, getSingleLocation, updateLocation, deleteSingleLocation, createLocation, getLocationTypes };
