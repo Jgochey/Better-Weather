@@ -4,20 +4,34 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/utils/context/authContext';
 import { Button, Card } from 'react-bootstrap';
 import Link from 'next/link';
-import { getUserLocations } from '../../../api/userData';
+import { deleteSingleLocation, getUserLocations } from '../../../api/userData';
 
 function SavedLocationsPage() {
   const { user } = useAuth();
   const [locations, setLocations] = useState([]);
 
   const setUserLocations = () => {
-    getUserLocations(user.uid).then(setLocations);
-    console.log(locations);
+    getUserLocations(user.uid).then((data) => {
+      // Add the Firebase key to each location
+      const locationsWithKeys = Object.entries(data).map(([key, value]) => ({
+        ...value, // Spread the existing location data (e.g., id, name, etc.)
+        firebaseKey: key, // Add the Firebase key to the location object
+      }));
+      setLocations(locationsWithKeys); // Update state with locations that now include firebaseKey
+      console.log(locations);
+    });
   }; // SETS THE USERS LOCATIONS TO BE FILTERED LATER
 
   useEffect(() => {
     setUserLocations();
+    console.log(locations);
   }, [user.uid]);
+
+  const deleteSavedLocation = (location) => {
+    if (window.confirm(`Delete ${location.name}?`)) {
+      deleteSingleLocation(user.uid, location.firebaseKey).then(() => setUserLocations());
+    }
+  };
 
   return (
     <div
@@ -29,13 +43,15 @@ function SavedLocationsPage() {
         margin: '0 auto',
       }}
     >
-      {/* <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={setUserLocations}>
+      <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={setUserLocations}>
         Test Locations
       </Button>
 
-      <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={setUserLocations}>
-        Add New Forecast Location
-      </Button> */}
+      <Link href="/NewForecastLocation/new" passHref>
+        <Button variant="danger" type="button" size="lg" className="copy-btn">
+          Add New Forecast Location
+        </Button>
+      </Link>
 
       <Link href="/Forecasts" passHref>
         <Button variant="primary" className="m-2">
@@ -44,14 +60,19 @@ function SavedLocationsPage() {
       </Link>
 
       <Card>
-        <p> Coming Soon </p>
-
         <div>
           {Object.values(locations).map((location) => (
-            <div key={location.id}>
+            <div key={location.firebaseKey}>
               <h3>{location.name}</h3>
-              <Button> Edit </Button>
-              <Button> Delete </Button>
+
+              <Link href={`/NewForecastLocation/${user.uid}/edit/${location.firebaseKey}`} passHref>
+                <Button variant="info"> Edit </Button>
+              </Link>
+
+              <Button variant="danger" onClick={() => deleteSavedLocation(location)}>
+                {' '}
+                Delete{' '}
+              </Button>
             </div>
           ))}
         </div>

@@ -7,7 +7,7 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { useAuth } from '../../utils/context/authContext';
-import { createLocation, updateLocation } from '../../api/userData';
+import { createLocation, getLocationTypes, updateLocation } from '../../api/userData';
 
 const initialState = {
   name: '',
@@ -16,17 +16,19 @@ const initialState = {
   show_chance_of_rain: true,
   set_default_location: false,
   location_type: 1,
+  // firebaseKey: null,
 };
 
-function NewLocationForm({ obj = initialState, locationId }) {
+function NewLocationForm({ obj = initialState }) {
   const [formInput, setFormInput] = useState(obj);
+  const [locationTypes, setLocationTypes] = useState([]);
   const router = useRouter();
-
   const { user } = useAuth();
 
   useEffect(() => {
-    if (obj.id) setFormInput(obj);
-    console.log(obj);
+    getLocationTypes(user.uid).then(setLocationTypes);
+
+    if (obj.firebaseKey) setFormInput(obj); // Give formInput location data for editing.
   }, [obj, user]);
 
   const handleChange = (e) => {
@@ -39,17 +41,22 @@ function NewLocationForm({ obj = initialState, locationId }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (obj.id) {
-      updateLocation(formInput).then(() => router.push(`/SavedLocations/${user.uid}`));
+    if (obj.firebaseKey) {
+      updateLocation(user.uid, obj.firebaseKey, formInput).then(() => router.push(`/SavedLocations/${user.uid}`));
     } else {
-      const payload = { ...formInput, locationId };
-      createLocation(payload).then(() => router.push(`/SavedLocations/${user.uid}`));
+      const payload = { ...formInput, uid: user.uid };
+      createLocation(user.uid, payload).then(({ name }) => {
+        const patchPayload = { firebaseKey: name };
+        updateLocation(user.uid, name, patchPayload).then(() => {
+          router.push(`/SavedLocations/${user.uid}`);
+        });
+      });
     }
   };
 
   return (
     <Form onSubmit={handleSubmit} className="text-black">
-      <h2 className="text-white mt-5">{obj.id ? 'Update' : 'Create'} Location</h2>
+      <h2 className="text-white mt-5">{obj.firebaseKey ? 'Update' : 'Create'} Location</h2>
 
       {/* NAME INPUT  */}
       <FloatingLabel controlId="floatingInput1" label="Location Name" className="mb-3">
@@ -80,7 +87,7 @@ function NewLocationForm({ obj = initialState, locationId }) {
       </FloatingLabel>
 
       {/* SHOW CHANCE OF RAIN INPUT  */}
-      <FloatingLabel controlId="floatingInput3" label="Show Chance of Rain" className="mb-3">
+      <FloatingLabel controlId="floatingInput4" label="Show Chance of Rain" className="mb-3">
         <Form.Check
           className="text-white mb-3"
           type="switch"
@@ -98,7 +105,7 @@ function NewLocationForm({ obj = initialState, locationId }) {
       </FloatingLabel>
 
       {/* SET DEFAULT LOCATION INPUT  */}
-      <FloatingLabel controlId="floatingInput3" label="Set Default Location" className="mb-3">
+      <FloatingLabel controlId="floatingInput5" label="Set Default Location" className="mb-3">
         <Form.Check
           className="text-white mb-3"
           type="switch"
@@ -116,46 +123,33 @@ function NewLocationForm({ obj = initialState, locationId }) {
       </FloatingLabel>
 
       {/* LOCATION TYPE INPUT  */}
-      <FloatingLabel controlId="floatingInput4" label="Location Type" className="mb-3">
-        <Form.Select aria-label="Default select example">
-          <option>Select Location Type</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-          <option value="4">Four</option>
+      <FloatingLabel controlId="floatingSelect" label="Location Type">
+        <Form.Select aria-label="Location Type" name="location_type" onChange={handleChange} className="mb-3" value={formInput.location_type || ''} required>
+          <option value="">Select Location Type</option>
+          {locationTypes.map((location) => (
+            <option key={location.firebaseKey} value={location.firebaseKey}>
+              {location.name}
+            </option>
+          ))}
         </Form.Select>
       </FloatingLabel>
 
-      {/* A WAY TO HANDLE UPDATES FOR TOGGLES, RADIOS, ETC  */}
-      {/* <Form.Check
-        className="text-white mb-3"
-        type="switch"
-        id="favorite"
-        name="favorite"
-        label="Favorite?"
-        checked={formInput.favorite}
-        onChange={(e) => {
-          setFormInput((prevState) => ({
-            ...prevState,
-            favorite: e.target.checked,
-          }));
-        }}
-      /> */}
-
       {/* SUBMIT BUTTON  */}
-      <Button type="submit">{obj.id ? 'Update' : 'Create'} Location</Button>
+      <Button type="submit">{obj.firebaseKey ? 'Update' : 'Create'} Location</Button>
     </Form>
   );
 }
 
 NewLocationForm.propTypes = {
   obj: PropTypes.shape({
-    title: PropTypes.string,
-    description: PropTypes.string,
-    iamgeUrl: PropTypes.string,
-    favorite: PropTypes.bool,
+    name: PropTypes.string,
+    zipcode: PropTypes.number,
+    show_humidity: PropTypes.bool,
+    show_chance_of_rain: PropTypes.bool,
+    set_default_location: PropTypes.bool,
+    location_type: PropTypes.number,
+    firebaseKey: PropTypes.string,
   }),
-  locationId: PropTypes.number.isRequired,
 };
 
 export default NewLocationForm;
