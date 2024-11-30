@@ -17,21 +17,16 @@ export default function ForecastsPage() {
   }; // SETS THE USERS LOCATIONS TO BE FILTERED LATER
 
   const [currentLocationId, setCurrentLocationId] = useState(null);
-  const [currentLocationName, setCurrentLocationName] = useState(null);
-  const [currnetLocationType, setCurrentLocationType] = useState(null);
+  const [forecasts, setForecasts] = useState([]);
 
   const updateCurrentLocationId = (number) => {
     if (locations[number] && locations[number].id) {
       setCurrentLocationId(locations[number].id);
-      setCurrentLocationName(locations[number].name);
-      setCurrentLocationType(locations[number].location_type);
       console.log(currentLocationId);
     } else {
       console.error('Invalid location or missing id');
     }
   };
-
-  const [forecasts, setForecasts] = useState([]);
 
   const forecastGetter = () => {
     getForecastsAlternate(currentLocationId).then(setForecasts);
@@ -60,83 +55,28 @@ export default function ForecastsPage() {
   }, [forecasts]);
 
   return (
-    <>
-      <div
-        className="text-center d-flex flex-column justify-content-center align-content-center"
-        style={{
-          height: '90vh',
-          padding: '30px',
-          maxWidth: '400px',
-          margin: '0 auto',
-        }}
-      >
-        <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={setUserLocations}>
-          Test Locations
-        </Button>
+    <div
+      className="text-center d-flex flex-column justify-content-center align-content-center"
+      style={{
+        height: '90vh',
+        padding: '30px',
+        maxWidth: '400px',
+        margin: '0 auto',
+      }}
+    >
+      <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={setUserLocations}>
+        Test Locations
+      </Button>
 
-        <div>
-          <Button onClick={() => updateCurrentLocationId(2)}>Update Location</Button>
-        </div>
-
-        <div>
-          <Button onClick={() => forecastGetter()}>Test Forecast</Button>
-        </div>
-
-        <ForecastCard UserId={user.uid} forecastObj={forecasts} LocationName={currentLocationName} LocationType={currnetLocationType} />
+      <div>
+        <Button onClick={() => updateCurrentLocationId(2)}>Update Location</Button>
       </div>
 
-      {/* <div>
-        <h1>Forecast Data</h1>
-        <ul>
-          {forecasts.map((forecast) => (
-            <li key={forecast.id}>
-              Rendering individual forecast properties instead of the whole object
-              <p>Date: {forecast.date}</p>
-              <p>Temperature: {forecast.temperature}°C</p>
-              <p>Humidity: {forecast.humidity}%</p>
-              <p>Chance of Rain: {forecast.chance_of_rain}%</p>
-              <p>
-                Icon: <img src={forecast.icon} alt="weather icon" />
-              </p>
+      <div>
+        <Button onClick={() => forecastGetter()}>Test Forecast</Button>
+      </div>
 
-              <p>Location Name: {currentLocationName}</p>
-              <p>Location Type: {currnetLocationType}</p>
-            </li>
-          ))}
-        </ul>
-      </div> */}
-
-      {/* Forecast Page
-
-    View Saved Locations
-    Dropdown Menu of Saved Locations
-
-    Card
-    location.name
-    forecast.icon
-    forecast.temperature
-    forecast.humidity
-    forecast.chance_of_rain
-    location.type */}
-
-      {/* <ForecastCard ForecastObj={} ObjId={} */}
-
-      {/* <div className="d-flex flex-wrap justify-content-md-center">
-      {locations.map((location) => (
-        <ForecastCard key={location.id} ForecastObj={location} ObjId={1}  />
-      ))}
-    </div> */}
-      {/* onUpdate={getFavPodList} */}
-      {/* <ForecastCard ForecastObj={locations} ObjId={1} /> */}
-      {/* <Selector SingleLocationId={1} /> */}
-
-      {/* <div>
-        {' '}
-        Forecasts
-        {forecasts.map((forecast) => (
-          <ForecastCard key={forecast.id} ForecastObj={forecast} />
-        ))}
-      </div> */}
-    </>
+      <ForecastCard UserId={user.uid} forecastObj={forecasts} />
+    </div>
   );
 }

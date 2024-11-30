@@ -85,6 +85,25 @@ const getForecastsAlternate = (locationId) =>
       .catch(reject);
   });
 
+const createNewForecast = () =>
+  new Promise((resolve, reject) => {
+    fetch(`${endpoint}/forecasts.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          resolve(Object.values(data));
+        } else {
+          resolve([]);
+        }
+      })
+      .catch(reject);
+  });
+
 // const getForecastsTakeThree = (userId, locationsId) => new Promise((resolve, reject) => {
 //   fetch(`${endpoint}/locations.json?orderBy="userId"&equalTo="${userId}"`, {
 //     method: 'GET',
@@ -103,4 +122,4 @@ const getForecastsAlternate = (locationId) =>
 //     .catch(reject);
 // });
 
-export { getLocationsByLocationId, getLocationsByUserId, getForecastsAlternate };
+export { getLocationsByLocationId, getLocationsByUserId, getForecastsAlternate, createNewForecast };
