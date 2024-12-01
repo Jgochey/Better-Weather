@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { Dropdown } from 'react-bootstrap';
 import { getUserLocations } from '../api/userData';
 import { useAuth } from '../utils/context/authContext';
-import { getForecastsAlternate } from '../api/forecastData';
+import { getForecast } from '../api/forecastData';
 
 // const userId = firebaseKey-- The userId used for CRUD should be pulled from the user's firebaseId.
 
@@ -18,9 +18,9 @@ export default function ForecastCard({ UserId }) {
   const { user } = useAuth();
   const [userLocations, setLocations] = useState([]);
   const [currentLocationName, setCurrentLocationName] = useState(null);
-  const [currnetLocationType, setCurrentLocationType] = useState(null);
-  const [currentLocationId, setCurrentLocationId] = useState(null);
-  const [currentForecastInfo, setCurrentForecastInfo] = useState(null);
+  const [currentLocationType, setCurrentLocationType] = useState(null);
+  // const [currentLocationId, setCurrentLocationId] = useState(null);
+  const [currentForecastInfo, setCurrentForecastInfo] = useState([]);
 
   useEffect(() => {
     if (user && user.uid) {
@@ -35,11 +35,38 @@ export default function ForecastCard({ UserId }) {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (user && user.uid) {
+      getUserLocations(user.uid).then((locations) => {
+        // This will make sure locations is an object for the dropdown menu.
+        if (locations && typeof locations === 'object') {
+          setLocations(locations);
+        } else {
+          setLocations({}); // Make sure its an object.
+        }
+      });
+    }
+  }, [user]);
+
+  // Set the forecast to match the currently selected location.
   const handleLocationSelect = (location) => {
     setCurrentLocationName(location.name);
     setCurrentLocationType(location.location_type);
-    setCurrentLocationId(location.id);
-    getForecastsAlternate(currentLocationId).then(setCurrentForecastInfo);
+    // setCurrentLocationId(location.id);
+    getForecast().then(setCurrentForecastInfo);
+    console.log(currentForecastInfo);
+  };
+
+  const displayLocationTypeName = () => {
+    // eslint-disable-next-line eqeqeq
+    if (currentLocationType === 0) {
+      return <p>Location Type: City </p>;
+      // eslint-disable-next-line eqeqeq
+    }
+    if (currentLocationType === 1) {
+      return <p>Location Type: Rural </p>;
+    }
+    return <p>Location Type: Other </p>;
   };
 
   // Convert the userLocations object to an array for rendering in the dropdown
@@ -81,7 +108,7 @@ export default function ForecastCard({ UserId }) {
                 <li key={forecast.id}>
                   <Card.Title>
                     <p>Location Name: {currentLocationName}</p>
-                    <p>Location Type: {currnetLocationType}</p>
+                    <p>Location Type: {currentLocationType}</p>
                   </Card.Title>
 
                   Rendering individual forecast properties instead of the whole object
@@ -112,7 +139,7 @@ export default function ForecastCard({ UserId }) {
                   <li key={forecast.id}>
                     <Card.Title>
                       <p>Location Name: {currentLocationName}</p>
-                      <p>Location Type: {currnetLocationType}</p>
+                      {displayLocationTypeName()}
                     </Card.Title>
 
                     {/* Rendering individual forecast properties */}
@@ -129,7 +156,7 @@ export default function ForecastCard({ UserId }) {
             </Card>
           </ul>
         ) : (
-          <p>Select a location to view the forecast data.</p>
+          <p>Select a location to view the upcoming forecast.</p>
         )}
       </div>
     </div>

@@ -33,6 +33,17 @@ function SavedLocationsPage() {
     }
   };
 
+  const displayLocationTypeName = (locationType) => {
+    // Displays the proper name of the location type depending on the value.
+    if (locationType === 0) {
+      return <h3>Location Type: City </h3>;
+    }
+    if (locationType === 1) {
+      return <h3>Location Type: Rural </h3>;
+    }
+    return <h3>Location Type: Other </h3>;
+  };
+
   return (
     <div
       className="text-center d-flex flex-column justify-content-center align-content-center"
@@ -64,6 +75,8 @@ function SavedLocationsPage() {
           {Object.values(locations).map((location) => (
             <div key={location.firebaseKey}>
               <h3>{location.name}</h3>
+              {/* Use the displayLocationTypeName function, passing the location_type */}
+              {displayLocationTypeName(location.location_type)}
 
               <Link href={`/NewForecastLocation/${user.uid}/edit/${location.firebaseKey}`} passHref>
                 <Button variant="info"> Edit </Button>

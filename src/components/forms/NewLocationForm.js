@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { useAuth } from '../../utils/context/authContext';
 import { createLocation, getLocationTypes, updateLocation } from '../../api/userData';
+// import { createNewForecast } from '../../api/forecastData';
 
 const initialState = {
   name: '',
@@ -19,6 +20,11 @@ const initialState = {
   // firebaseKey: null,
 };
 
+// For generating forecast info
+// function getRandomInt(max) {
+//   return Math.floor(Math.random() * max);
+// }
+
 function NewLocationForm({ obj = initialState }) {
   const [formInput, setFormInput] = useState(obj);
   const [locationTypes, setLocationTypes] = useState([]);
@@ -26,16 +32,28 @@ function NewLocationForm({ obj = initialState }) {
   const { user } = useAuth();
 
   useEffect(() => {
-    getLocationTypes(user.uid).then(setLocationTypes);
+    getLocationTypes().then(setLocationTypes);
 
     if (obj.firebaseKey) setFormInput(obj); // Give formInput location data for editing.
-  }, [obj, user]);
+  }, [obj]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormInput((prevState) => ({
       ...prevState,
       [name]: value,
+    }));
+  };
+
+  const handleChangeType = (e) => {
+    const { name, value } = e.target;
+
+    // If the value is location_type, convert it to a number
+    const newValue = name === 'location_type' ? Number(value) : value;
+
+    setFormInput((prevState) => ({
+      ...prevState,
+      [name]: newValue,
     }));
   };
 
@@ -53,6 +71,50 @@ function NewLocationForm({ obj = initialState }) {
       });
     }
   };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+
+  //   // Prepare location payload
+  //   const locationPayload = { ...formInput, uid: user.uid };
+
+  //   // Create or update the location first
+  //   const createOrUpdateLocation = obj.firebaseKey
+  //     ? updateLocation(user.uid, obj.firebaseKey, locationPayload)
+  //     : createLocation(user.uid, locationPayload).then(({ name }) => {
+  //         // After location creation, update the location with firebaseKey
+  //         const patchPayload = { firebaseKey: name };
+  //         return updateLocation(user.uid, name, patchPayload);
+  //       });
+
+  //   // Create the forecast only if we're creating a new location
+  //   const createForecast = obj.firebaseKey
+  //     ? Promise.resolve()  // No forecast creation if editing an existing location
+  //     : createOrUpdateLocation.then((locationData) => {
+  //         const forecastPayload = {
+  //           location_Id: locationData.firebaseKey || obj.firebaseKey, // Use the location's firebaseKey here
+  //           temperature: getRandomInt(100),
+  //           humidity: getRandomInt(100),
+  //           chance_of_rain: getRandomInt(100),
+  //           date: '12/1/2024',
+  //           icon: 'http://dummyimage.com/178x100.png/ff4444/ffffff',
+  //           // Add other forecast data as needed
+  //         };
+
+  //         return createNewForecast(forecastPayload); // Create forecast for new locations only
+  //       });
+
+  //   // Use Promise.all to wait for both the location and forecast to be submitted
+  //   Promise.all([createOrUpdateLocation, createForecast])
+  //     .then(() => {
+  //       // Navigate after both submissions succeed
+  //       router.push(`/SavedLocations/${user.uid}`);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error submitting location and forecast:", error);
+  //       // Handle the error appropriately (show a message to the user, etc.)
+  //     });
+  // };
 
   return (
     <Form onSubmit={handleSubmit} className="text-black">
@@ -124,7 +186,8 @@ function NewLocationForm({ obj = initialState }) {
 
       {/* LOCATION TYPE INPUT  */}
       <FloatingLabel controlId="floatingSelect" label="Location Type">
-        <Form.Select aria-label="Location Type" name="location_type" onChange={handleChange} className="mb-3" value={formInput.location_type || ''} required>
+        <Form.Select aria-label="Location Type" name="location_type" onChange={handleChangeType} className="mb-3" value={formInput.location_type ?? ''} required>
+          {/* The ?? will check for the 0th value */}
           <option value="">Select Location Type</option>
           {locationTypes.map((location) => (
             <option key={location.firebaseKey} value={location.firebaseKey}>
