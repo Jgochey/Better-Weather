@@ -2,32 +2,6 @@ import { clientCredentials } from '../utils/client';
 
 const endpoint = clientCredentials.databaseURL;
 
-// const getForecasts = (userId) =>
-//   new Promise((resolve, reject) => {
-//     fetch(`${endpoint}/${userId}`, {
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     })
-//       .then((response) => response.json())
-//       .then((data) => resolve(data))
-//       .catch(reject);
-//   });
-
-//   const getLocations = (userId) =>
-//     new Promise((resolve, reject) => {
-//       fetch(`${endpoint}/${userId}/locations`, {
-//         method: 'GET',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//       })
-//         .then((response) => response.json())
-//         .then((data) => resolve(data))
-//         .catch(reject);
-//     });
-
 const getLocationsByUserId = (userId) =>
   new Promise((resolve, reject) => {
     fetch(`${endpoint}/locations.json?orderBy="userId"&equalTo="${userId}"`, {
@@ -66,6 +40,45 @@ const getLocationsByLocationId = (locationId) =>
       .catch(reject);
   });
 
+// const getForecast = () =>
+//   new Promise((resolve, reject) => {
+//     fetch(`${endpoint}/forecasts/0.json`, {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     })
+//       .then((response) => response.json())
+//       .then((data) => {
+//         if (data) {
+//           resolve(Object.values(data));
+//         } else {
+//           resolve([]);
+//         }
+//       })
+//       .catch(reject);
+//   });
+
+const getForecast = () =>
+  new Promise((resolve, reject) => {
+    fetch(`${endpoint}/forecasts/0.json`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Forecast data:', data); // Debugging line
+        if (data) {
+          resolve(Object.values(data)); // Convert object to array of values
+        } else {
+          resolve([]); // Return empty array if no data
+        }
+      })
+      .catch(reject);
+  });
+
 const getForecastsAlternate = (locationId) =>
   new Promise((resolve, reject) => {
     fetch(`${endpoint}/forecasts.json?orderBy="location_id"&equalTo=${locationId}`, {
@@ -85,41 +98,46 @@ const getForecastsAlternate = (locationId) =>
       .catch(reject);
   });
 
-const createNewForecast = () =>
+// const createNewForecast = () =>
+//   new Promise((resolve, reject) => {
+//     fetch(`${endpoint}/forecasts.json`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     })
+//       .then((response) => response.json())
+//       .then((data) => {
+//         if (data) {
+//           resolve(Object.values(data));
+//         } else {
+//           resolve([]);
+//         }
+//       })
+//       .catch(reject);
+//   });
+
+const createNewForecast = (forecastData) =>
   new Promise((resolve, reject) => {
     fetch(`${endpoint}/forecasts.json`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify(forecastData), // Pass forecast data in the request body
     })
       .then((response) => response.json())
       .then((data) => {
         if (data) {
-          resolve(Object.values(data));
+          resolve(Object.values(data)); // Resolve with forecast data
         } else {
-          resolve([]);
+          resolve([]); // If no data, resolve with an empty array
         }
       })
-      .catch(reject);
+      .catch((error) => {
+        console.error('Error creating forecast:', error);
+        reject(error); // Reject the promise if the API call fails
+      });
   });
 
-// const getForecastsTakeThree = (userId, locationsId) => new Promise((resolve, reject) => {
-//   fetch(`${endpoint}/locations.json?orderBy="userId"&equalTo="${userId}"`, {
-//     method: 'GET',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//   })
-//     .then((response) => response.json())
-//     .then((data) => {
-//       if (data) {
-//         resolve(Object.values(data));
-//       } else {
-//         resolve([]);
-//       }
-//     })
-//     .catch(reject);
-// });
-
-export { getLocationsByLocationId, getLocationsByUserId, getForecastsAlternate, createNewForecast };
+export { getLocationsByLocationId, getLocationsByUserId, getForecast, getForecastsAlternate, createNewForecast };
