@@ -21,12 +21,11 @@ Great for anyone who wants to keep an eye on the weather at home, on vacation, o
 
 ## Project Screenshots
 
-<img width="1148" alt="Viewing Locations" src="https://media.discordapp.net/attachments/1116212815993249792/1313342180919607336/betterweather1.png?ex=674fc8b8&is=674e7738&hm=6e80b35c67f6d70aabe935cfc7321ee22c8988af8919f0df1547dbcd891185d7&=&format=webp&quality=lossless&width=383&height=670">
+<img width="300" alt="Viewing Locations" src="https://media.discordapp.net/attachments/1116212815993249792/1313342180919607336/betterweather1.png?ex=674fc8b8&is=674e7738&hm=6e80b35c67f6d70aabe935cfc7321ee22c8988af8919f0df1547dbcd891185d7&=&format=webp&quality=lossless&width=383&height=670">
 
-<img width="1148" alt="Adding New Location" src="https://media.discordapp.net/attachments/1116212815993249792/1313342181284646912/betterweather2.png?ex=674fc8b8&is=674e7738&hm=38b93d3ba7ee3a5429912d2986a0b28c407fe111b0b92e1d73abd1bb2b4a7efa&=&format=webp&quality=lossless">
+<img width="300" alt="Adding New Location" src="https://media.discordapp.net/attachments/1116212815993249792/1313342181284646912/betterweather2.png?ex=674fc8b8&is=674e7738&hm=38b93d3ba7ee3a5429912d2986a0b28c407fe111b0b92e1d73abd1bb2b4a7efa&=&format=webp&quality=lossless">
 
-<img width="1148" alt="Selecting a Location" src="
-https://media.discordapp.net/attachments/1116212815993249792/1313342181695815723/betterweather3.png?ex=674fc8b8&is=674e7738&hm=f1d3e2b12bd8eb3312abe4a08c65396ef6b38b76cdba3e7aad29caca1d987b00&=&format=webp&quality=lossless">
+<img width="300" alt="Selecting a Location" src="https://media.discordapp.net/attachments/1116212815993249792/1313342181695815723/betterweather3.png?ex=674fc8b8&is=674e7738&hm=f1d3e2b12bd8eb3312abe4a08c65396ef6b38b76cdba3e7aad29caca1d987b00&=&format=webp&quality=lossless">
 
 ## Contributing
 
