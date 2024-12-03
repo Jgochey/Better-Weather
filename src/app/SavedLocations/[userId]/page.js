@@ -35,10 +35,10 @@ function SavedLocationsPage() {
 
   const displayLocationTypeName = (locationType) => {
     // Displays the proper name of the location type depending on the value.
-    if (locationType === 0) {
+    if (locationType === 0 || locationType === '0') {
       return <h3>Location Type: City </h3>;
     }
-    if (locationType === 1) {
+    if (locationType === 1 || locationType === '1') {
       return <h3>Location Type: Rural </h3>;
     }
     return <h3>Location Type: Other </h3>;
@@ -54,9 +54,9 @@ function SavedLocationsPage() {
         margin: '0 auto',
       }}
     >
-      <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={setUserLocations}>
+      {/* <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={setUserLocations}>
         Test Locations
-      </Button>
+      </Button> */}
 
       <Link href="/NewForecastLocation/new" passHref>
         <Button variant="danger" type="button" size="lg" className="copy-btn">

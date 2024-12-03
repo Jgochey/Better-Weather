@@ -35,19 +35,6 @@ export default function ForecastCard({ UserId }) {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (user && user.uid) {
-      getUserLocations(user.uid).then((locations) => {
-        // This will make sure locations is an object for the dropdown menu.
-        if (locations && typeof locations === 'object') {
-          setLocations(locations);
-        } else {
-          setLocations({}); // Make sure its an object.
-        }
-      });
-    }
-  }, [user]);
-
   // Set the forecast to match the currently selected location.
   const handleLocationSelect = (location) => {
     setCurrentLocationName(location.name);
