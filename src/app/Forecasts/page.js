@@ -70,9 +70,9 @@ export default function ForecastsPage() {
 
       <div>
         <Button onClick={() => updateCurrentLocationId(2)}>Update Location</Button>
-      </div>
+      </div> */}
 
-      <div>
+      {/* <div>
         <Button onClick={() => forecastGetter()}>Test Forecast</Button>
       </div> */}
 
