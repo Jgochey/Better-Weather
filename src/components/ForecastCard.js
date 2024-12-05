@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -8,19 +10,16 @@ import Link from 'next/link';
 import { Dropdown } from 'react-bootstrap';
 import { getUserLocations } from '../api/userData';
 import { useAuth } from '../utils/context/authContext';
-import { getForecast } from '../api/forecastData';
+// import { getForecast } from '../api/forecastData';
+import { get3DayWeather } from '../api/WeatherApiTest';
 
-// const userId = firebaseKey-- The userId used for CRUD should be pulled from the user's firebaseId.
-
-// export default function ForecastCard({ UserId, forecastObj, LocationName, LocationType }) {
-// export default function ForecastCard({ UserId, forecastObj }) {
 export default function ForecastCard({ UserId }) {
   const { user } = useAuth();
   const [userLocations, setLocations] = useState([]);
   const [currentLocationName, setCurrentLocationName] = useState(null);
   const [currentLocationType, setCurrentLocationType] = useState(null);
   // const [currentLocationId, setCurrentLocationId] = useState(null);
-  const [currentForecastInfo, setCurrentForecastInfo] = useState([]);
+  const [currentForecastInfo, setCurrentForecastInfo] = useState(null);
 
   useEffect(() => {
     if (user && user.uid) {
@@ -40,7 +39,9 @@ export default function ForecastCard({ UserId }) {
     setCurrentLocationName(location.name);
     setCurrentLocationType(location.location_type);
     // setCurrentLocationId(location.id);
-    getForecast().then(setCurrentForecastInfo);
+    get3DayWeather(location.zipcode).then((forecast) => {
+      setCurrentForecastInfo(forecast);
+    });
     console.log(currentForecastInfo);
   };
 
@@ -59,6 +60,10 @@ export default function ForecastCard({ UserId }) {
   // Convert the userLocations object to an array for rendering in the dropdown
   const locationArray = Object.values(userLocations);
 
+  const weatherTest = () => {
+    console.log(currentForecastInfo);
+  };
+
   return (
     <div>
       <Link href={`/SavedLocations/${UserId}`} passHref>
@@ -73,12 +78,16 @@ export default function ForecastCard({ UserId }) {
           Select Location
         </Dropdown.Toggle>
 
+        <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={weatherTest}>
+          Test Weather Data
+        </Button>
+
         <Dropdown.Menu>
           {locationArray.length === 0 ? (
             <Dropdown.Item disabled>No saved locations</Dropdown.Item>
           ) : (
             locationArray.map((location) => (
-              <Dropdown.Item key={location.id} onClick={() => handleLocationSelect(location)}>
+              <Dropdown.Item key={location.firebaseKey} onClick={() => handleLocationSelect(location)}>
                 {location.name}
               </Dropdown.Item>
             ))
@@ -86,62 +95,66 @@ export default function ForecastCard({ UserId }) {
         </Dropdown.Menu>
       </Dropdown>
 
-      {/* <div>
-        <h1>Forecast Data</h1>
-        <ul>
-          <Card style={{ width: '18rem', margin: '10px' }}>
-            <Card.Body>
-              {currentForecastInfo.map((forecast) => (
-                <li key={forecast.id}>
-                  <Card.Title>
-                    <p>Location Name: {currentLocationName}</p>
-                    <p>Location Type: {currentLocationType}</p>
-                  </Card.Title>
-
-                  Rendering individual forecast properties instead of the whole object
-                  <p>Date: {forecast.date}</p>
-                  <p>Temperature: {forecast.temperature}°C</p>
-                  <p>Humidity: {forecast.humidity}%</p>
-                  <p>Chance of Rain: {forecast.chance_of_rain}%</p>
-                  <p>
-                    Icon: <img src={forecast.icon} alt="weather icon" />
-                  </p>
-                </li>
-              ))}
-            </Card.Body>
-          </Card>
-        </ul>
-      </div>
-
-    </div>
-  );
-} */}
       <div>
         <h1>Forecast Data</h1>
-        {currentForecastInfo && Array.isArray(currentForecastInfo) && currentForecastInfo.length > 0 ? (
-          <ul>
-            <Card style={{ width: '18rem', margin: '10px' }}>
-              <Card.Body>
-                {currentForecastInfo.map((forecast) => (
-                  <li key={forecast.id}>
-                    <Card.Title>
-                      <p>Location Name: {currentLocationName}</p>
-                      {displayLocationTypeName()}
-                    </Card.Title>
+        {currentForecastInfo && currentForecastInfo.forecast && currentForecastInfo.forecast.forecastday && currentForecastInfo.forecast.forecastday.length > 0 ? (
+          <>
+            <div className="primaryForecast">
+              <Card style={{ width: '18rem', margin: '10px' }}>
+                <Card.Body>
+                  {/* Accessing forecast for each day directly */}
+                  <Card.Title>
+                    <p>Location Name: {currentLocationName}</p>
+                    {displayLocationTypeName()}
+                  </Card.Title>
 
-                    {/* Rendering individual forecast properties */}
-                    <p>Date: {forecast.date}</p>
-                    <p>Temperature: {forecast.temperature}°C</p>
-                    <p>Humidity: {forecast.humidity}%</p>
-                    <p>Chance of Rain: {forecast.chance_of_rain}%</p>
-                    <p>
-                      Icon: <img src={forecast.icon} alt="weather icon" />
-                    </p>
-                  </li>
-                ))}
-              </Card.Body>
-            </Card>
-          </ul>
+                  {/* For Day 1 */}
+                  <p>Date: {currentForecastInfo.current.last_updated}</p>
+                  <p>Temperature: {currentForecastInfo.current.temp_f}°F</p>
+                  <p>Humidity: {currentForecastInfo.current.humidity}%</p>
+                  <p>Chance of Rain: {currentForecastInfo.forecast.forecastday[0].day.daily_chance_of_rain}%</p>
+                  <p>
+                    Icon: <img src={currentForecastInfo.current.condition.icon} alt={currentForecastInfo.current.condition.text} />
+                  </p>
+                </Card.Body>
+              </Card>
+            </div>
+
+            <p>Upcoming Weather</p>
+
+            <div className="secondaryForecasts">
+              <Card style={{ width: '18rem', margin: '10px' }}>
+                <Card.Body>
+                  <Card.Title>
+                    <h1> Tomorrow </h1>
+                    {/* For Day 2 */}
+                  </Card.Title>
+
+                  <p>
+                    Icon: <img src={currentForecastInfo.forecast.forecastday[1].day.condition.icon} alt="weather icon" />
+                  </p>
+                  <p>Temperature: {currentForecastInfo.forecast.forecastday[1].day.avgtemp_f}°F</p>
+                  <p>Humidity: {currentForecastInfo.forecast.forecastday[1].day.avghumidity}%</p>
+                  <p>Chance of Rain: {currentForecastInfo.forecast.forecastday[1].day.daily_chance_of_rain}%</p>
+                  <p>{displayLocationTypeName()}</p>
+                </Card.Body>
+              </Card>
+
+              <Card style={{ width: '18rem', margin: '10px' }}>
+                <Card.Body>
+                  <Card.Title>
+                    <h1> The Day After </h1>
+                    {/* For Day 3 */}
+                  </Card.Title>
+                </Card.Body>
+                Icon: <img src={currentForecastInfo.forecast.forecastday[2].day.condition.icon} alt="weather icon" />
+                <p>Temperature: {currentForecastInfo.forecast.forecastday[2].day.avgtemp_f}°F</p>
+                <p>Humidity: {currentForecastInfo.forecast.forecastday[2].day.avghumidity}%</p>
+                <p>Chance of Rain: {currentForecastInfo.forecast.forecastday[2].day.daily_chance_of_rain}%</p>
+                <p>{displayLocationTypeName()}</p>
+              </Card>
+            </div>
+          </>
         ) : (
           <p>Select a location to view the upcoming forecast.</p>
         )}
