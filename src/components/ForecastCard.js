@@ -10,7 +10,6 @@ import Link from 'next/link';
 import { Dropdown } from 'react-bootstrap';
 import { getUserLocations } from '../api/userData';
 import { useAuth } from '../utils/context/authContext';
-// import { getForecast } from '../api/forecastData';
 import { get3DayWeather } from '../api/WeatherApiTest';
 
 export default function ForecastCard({ UserId }) {
@@ -18,17 +17,32 @@ export default function ForecastCard({ UserId }) {
   const [userLocations, setLocations] = useState([]);
   const [currentLocationName, setCurrentLocationName] = useState(null);
   const [currentLocationType, setCurrentLocationType] = useState(null);
-  // const [currentLocationId, setCurrentLocationId] = useState(null);
   const [currentForecastInfo, setCurrentForecastInfo] = useState(null);
+  const [currentForecastHumidity, setCurrentForecastHumidity] = useState(true);
+  const [currentForecastCOR, setCurrentForecastCOR] = useState(true);
+
+  // useEffect(() => {
+  //   if (user && user.uid) {
+  //     getUserLocations(user.uid).then((locations) => {
+  //       if (locations && typeof locations === 'object') {
+  //         setLocations(locations);
+  //       } else {
+  //         setLocations({}); // Make sure its an object.
+  //       }
+  //     });
+  //   }
+  // }, [user]);
 
   useEffect(() => {
     if (user && user.uid) {
       getUserLocations(user.uid).then((locations) => {
-        // This will make sure locations is an object for the dropdown menu.
-        if (locations && typeof locations === 'object') {
-          setLocations(locations);
+        if (locations && typeof locations === 'object' && Object.keys(locations).length > 0) {
+          // This will make sure locations is an object for the dropdown menu.
+          setLocations(locations); // Set locations if valid
         } else {
-          setLocations({}); // Make sure its an object.
+          setLocations({});
+          // If there are no Forecast Locations available, redirect to the New Forecast Form
+          window.location.replace('/NewForecastLocation');
         }
       });
     }
@@ -38,7 +52,8 @@ export default function ForecastCard({ UserId }) {
   const handleLocationSelect = (location) => {
     setCurrentLocationName(location.name);
     setCurrentLocationType(location.location_type);
-    // setCurrentLocationId(location.id);
+    setCurrentForecastHumidity(location.show_humidity);
+    setCurrentForecastCOR(location.show_chance_of_rain);
     get3DayWeather(location.zipcode).then((forecast) => {
       setCurrentForecastInfo(forecast);
     });
@@ -46,15 +61,13 @@ export default function ForecastCard({ UserId }) {
   };
 
   const displayLocationTypeName = () => {
-    // eslint-disable-next-line eqeqeq
     if (currentLocationType === 0) {
-      return <p>Location Type: City </p>;
-      // eslint-disable-next-line eqeqeq
+      return <div>Location Type: City </div>;
     }
     if (currentLocationType === 1) {
-      return <p>Location Type: Rural </p>;
+      return <div>Location Type: Rural </div>;
     }
-    return <p>Location Type: Other </p>;
+    return <div>Location Type: Other </div>;
   };
 
   // Convert the userLocations object to an array for rendering in the dropdown
@@ -104,23 +117,27 @@ export default function ForecastCard({ UserId }) {
                 <Card.Body>
                   {/* Accessing forecast for each day directly */}
                   <Card.Title>
-                    <p>Location Name: {currentLocationName}</p>
+                    <div>Location Name: {currentLocationName}</div>
                     {displayLocationTypeName()}
                   </Card.Title>
 
                   {/* For Day 1 */}
-                  <p>Date: {currentForecastInfo.current.last_updated}</p>
-                  <p>Temperature: {currentForecastInfo.current.temp_f}°F</p>
-                  <p>Humidity: {currentForecastInfo.current.humidity}%</p>
-                  <p>Chance of Rain: {currentForecastInfo.forecast.forecastday[0].day.daily_chance_of_rain}%</p>
-                  <p>
+                  <div>Date: {currentForecastInfo.current.last_updated}</div>
+                  <div>
                     Icon: <img src={currentForecastInfo.current.condition.icon} alt={currentForecastInfo.current.condition.text} />
-                  </p>
+                  </div>
+                  <div>Temperature: {currentForecastInfo.current.temp_f}°F</div>
+
+                  {/* Show only if humidity is set to true for this location */}
+                  {currentForecastHumidity && <div>Humidity: {currentForecastInfo.current.humidity}%</div>}
+
+                  {/* Show only if chance of rain is set to true for this location */}
+                  {currentForecastCOR && <div>Chance of Rain: {currentForecastInfo.forecast.forecastday[0].day.daily_chance_of_rain}%</div>}
                 </Card.Body>
               </Card>
             </div>
 
-            <p>Upcoming Weather</p>
+            <div>Upcoming Weather</div>
 
             <div className="secondaryForecasts">
               <Card style={{ width: '18rem', margin: '10px' }}>
@@ -130,33 +147,43 @@ export default function ForecastCard({ UserId }) {
                     {/* For Day 2 */}
                   </Card.Title>
 
-                  <p>
+                  <div>
                     Icon: <img src={currentForecastInfo.forecast.forecastday[1].day.condition.icon} alt="weather icon" />
-                  </p>
-                  <p>Temperature: {currentForecastInfo.forecast.forecastday[1].day.avgtemp_f}°F</p>
-                  <p>Humidity: {currentForecastInfo.forecast.forecastday[1].day.avghumidity}%</p>
-                  <p>Chance of Rain: {currentForecastInfo.forecast.forecastday[1].day.daily_chance_of_rain}%</p>
-                  <p>{displayLocationTypeName()}</p>
+                  </div>
+                  <div>Temperature: {currentForecastInfo.forecast.forecastday[1].day.avgtemp_f}°F</div>
+
+                  {/* Show only if humidity is set to true for this location */}
+                  {currentForecastHumidity && <div>Humidity: {currentForecastInfo.forecast.forecastday[1].day.avghumidity}%</div>}
+
+                  {/* Show only if chance of rain is set to true for this location */}
+                  {currentForecastCOR && <div>Chance of Rain: {currentForecastInfo.forecast.forecastday[1].day.daily_chance_of_rain}%</div>}
+                  <div>{displayLocationTypeName()}</div>
                 </Card.Body>
               </Card>
 
               <Card style={{ width: '18rem', margin: '10px' }}>
                 <Card.Body>
                   <Card.Title>
-                    <h1> The Day After </h1>
+                    <h1> In 2 Days </h1>
                     {/* For Day 3 */}
                   </Card.Title>
+                  <div>
+                    Icon: <img src={currentForecastInfo.forecast.forecastday[2].day.condition.icon} alt="weather icon" />
+                  </div>
+                  <div>Temperature: {currentForecastInfo.forecast.forecastday[2].day.avgtemp_f}°F</div>
+
+                  {/* Show only if humidity is set to true for this location */}
+                  {currentForecastHumidity && <div>Humidity: {currentForecastInfo.forecast.forecastday[2].day.avghumidity}%</div>}
+
+                  {/* Show only if chance of rain is set to true for this location */}
+                  {currentForecastCOR && <div>Chance of Rain: {currentForecastInfo.forecast.forecastday[2].day.daily_chance_of_rain}%</div>}
+                  <div>{displayLocationTypeName()}</div>
                 </Card.Body>
-                Icon: <img src={currentForecastInfo.forecast.forecastday[2].day.condition.icon} alt="weather icon" />
-                <p>Temperature: {currentForecastInfo.forecast.forecastday[2].day.avgtemp_f}°F</p>
-                <p>Humidity: {currentForecastInfo.forecast.forecastday[2].day.avghumidity}%</p>
-                <p>Chance of Rain: {currentForecastInfo.forecast.forecastday[2].day.daily_chance_of_rain}%</p>
-                <p>{displayLocationTypeName()}</p>
               </Card>
             </div>
           </>
         ) : (
-          <p>Select a location to view the upcoming forecast.</p>
+          <div>Select a location to view the upcoming forecast.</div>
         )}
       </div>
     </div>
@@ -164,18 +191,5 @@ export default function ForecastCard({ UserId }) {
 }
 
 ForecastCard.propTypes = {
-  // forecastObj: PropTypes.arrayOf(
-  //   PropTypes.shape({
-  //     podcastId: PropTypes.number,
-  //     id: PropTypes.number,
-  //     date: PropTypes.string,
-  //     temperature: PropTypes.number,
-  //     humidity: PropTypes.number,
-  //     chance_of_rain: PropTypes.number,
-  //     icon: PropTypes.string,
-  //   }),
-  // ).isRequired,
   UserId: PropTypes.string.isRequired,
-  // LocationName: PropTypes.string.isRequired,
-  // LocationType: PropTypes.number.isRequired,
 };
