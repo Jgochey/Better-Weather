@@ -10,21 +10,45 @@ function SavedLocationsPage() {
   const { user } = useAuth();
   const [locations, setLocations] = useState([]);
 
+  // const setUserLocations = () => {
+  //   getUserLocations(user.uid).then((data) => {
+  //     // Add the Firebase key to each location
+  //     const locationsWithKeys = Object.entries(data).map(([key, value]) => ({
+  //       ...value, // Spread the existing location data (e.g., id, name, etc.)
+  //       firebaseKey: key, // Add the Firebase key to the location object
+  //     }));
+  //     setLocations(locationsWithKeys); // Update state with locations that now include firebaseKey
+  //     console.log(locations);
+  //   });
+  // }; // SETS THE USERS LOCATIONS TO BE FILTERED LATER
+
+  // useEffect(() => {
+  //   setUserLocations();
+  //   console.log(locations);
+  // }, [user.uid]);
+
   const setUserLocations = () => {
     getUserLocations(user.uid).then((data) => {
-      // Add the Firebase key to each location
+      if (!data || Object.keys(data).length === 0) {
+        // Redirect to the New Forecast form if the user does not have any saved locations
+        window.location.replace('/NewForecastLocation');
+        return;
+      }
+
       const locationsWithKeys = Object.entries(data).map(([key, value]) => ({
         ...value, // Spread the existing location data (e.g., id, name, etc.)
         firebaseKey: key, // Add the Firebase key to the location object
       }));
-      setLocations(locationsWithKeys); // Update state with locations that now include firebaseKey
-      console.log(locations);
+
+      setLocations(locationsWithKeys);
+      console.log(locationsWithKeys);
     });
   }; // SETS THE USERS LOCATIONS TO BE FILTERED LATER
 
   useEffect(() => {
-    setUserLocations();
-    console.log(locations);
+    if (user && user.uid) {
+      setUserLocations();
+    }
   }, [user.uid]);
 
   const deleteSavedLocation = (location) => {
@@ -75,7 +99,7 @@ function SavedLocationsPage() {
           {Object.values(locations).map((location) => (
             <div key={location.firebaseKey}>
               <h3>{location.name}</h3>
-              {/* Use the displayLocationTypeName function, passing the location_type */}
+              {/* Show the proper name of the location type depending on the number value of location.location_type */}
               {displayLocationTypeName(location.location_type)}
 
               <Link href={`/NewForecastLocation/${user.uid}/edit/${location.firebaseKey}`} passHref>

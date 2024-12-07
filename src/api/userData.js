@@ -27,6 +27,19 @@ const getUserLocations = (uid) =>
       .catch(reject);
   });
 
+const getUserDefaultLocation = (uid) =>
+  new Promise((resolve, reject) => {
+    fetch(`${clientCredentials.databaseURL}/users/${uid}/locations.json?orderBy="set_default_location"&equalTo=true`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => resolve(data))
+      .catch(reject);
+  });
+
 const checkUser = (uid) =>
   new Promise((resolve, reject) => {
     fetch(`${clientCredentials.databaseURL}/checkuser?uid=${uid}`, {
@@ -128,4 +141,4 @@ const getLocationTypes = () =>
       .catch(reject);
   });
 
-export { checkUser, registerUser, getUser, getUserLocations, getSingleLocation, updateLocation, deleteSingleLocation, createLocation, getLocationTypes };
+export { checkUser, registerUser, getUser, getUserLocations, getSingleLocation, updateLocation, deleteSingleLocation, createLocation, getLocationTypes, getUserDefaultLocation };
