@@ -110,6 +110,10 @@ function SavedLocationsPage() {
                 {' '}
                 Delete{' '}
               </Button>
+
+              {/* if set_default_location === true {
+                icon star
+              } */}
             </div>
           ))}
         </div>

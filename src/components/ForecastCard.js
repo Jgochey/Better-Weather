@@ -20,6 +20,7 @@ export default function ForecastCard({ UserId }) {
   const [currentForecastInfo, setCurrentForecastInfo] = useState(null);
   const [currentForecastHumidity, setCurrentForecastHumidity] = useState(true);
   const [currentForecastCOR, setCurrentForecastCOR] = useState(true);
+  const [defaultLocation, setDefaultLocation] = useState(null);
 
   // useEffect(() => {
   //   if (user && user.uid) {
@@ -60,6 +61,35 @@ export default function ForecastCard({ UserId }) {
     console.log(currentForecastInfo);
   };
 
+  // DEFAULT LOCATION HANDLING
+  useEffect(() => {
+    if (user && user.uid) {
+      getUserLocations(user.uid)
+        .then((locations) => {
+          // Check if locations is a valid object
+          if (locations && typeof locations === 'object' && Object.keys(locations).length > 0) {
+            // Find the default location by searching for the location with set_default_location: true
+            const foundDefaultLocation = Object.values(locations).find((location) => location.set_default_location === true);
+
+            if (foundDefaultLocation) {
+              // Update the state with the found default location
+              setDefaultLocation(foundDefaultLocation);
+
+              // Optionally, call handleLocationSelect to auto-select the default location and load weather data
+              handleLocationSelect(foundDefaultLocation);
+            } else {
+              console.log('No default location found');
+            }
+          } else {
+            console.log('No locations available');
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching locations:', error);
+        });
+    }
+  }, [user]); // Dependency on 'user', ensuring this runs when 'user' changes
+
   const displayLocationTypeName = () => {
     if (currentLocationType === 0) {
       return <div>Location Type: City </div>;
@@ -75,6 +105,10 @@ export default function ForecastCard({ UserId }) {
 
   const weatherTest = () => {
     console.log(currentForecastInfo);
+  };
+
+  const defaultLocationTest = () => {
+    console.log(defaultLocation);
   };
 
   return (
@@ -93,6 +127,10 @@ export default function ForecastCard({ UserId }) {
 
         <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={weatherTest}>
           Test Weather Data
+        </Button>
+
+        <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={defaultLocationTest}>
+          Test Default Location
         </Button>
 
         <Dropdown.Menu>

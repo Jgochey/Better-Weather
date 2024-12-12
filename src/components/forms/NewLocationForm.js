@@ -7,7 +7,7 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { useAuth } from '../../utils/context/authContext';
-import { createLocation, getLocationTypes, updateLocation } from '../../api/userData';
+import { createLocation, deleteSingleLocation, getLocationTypes, getUserLocations, updateDefaultLocation, updateLocation } from '../../api/userData';
 // import { createNewForecast } from '../../api/forecastData';
 
 const initialState = {
@@ -20,11 +20,6 @@ const initialState = {
   // firebaseKey: null,
 };
 
-// For generating forecast info
-// function getRandomInt(max) {
-//   return Math.floor(Math.random() * max);
-// }
-
 function NewLocationForm({ obj = initialState }) {
   const [formInput, setFormInput] = useState(obj);
   const [locationTypes, setLocationTypes] = useState([]);
@@ -33,6 +28,7 @@ function NewLocationForm({ obj = initialState }) {
 
   useEffect(() => {
     getLocationTypes().then(setLocationTypes);
+    getUserLocations(user.uid);
 
     if (obj.firebaseKey) setFormInput(obj); // Give formInput location data for editing.
   }, [obj]);
@@ -57,64 +53,41 @@ function NewLocationForm({ obj = initialState }) {
     }));
   };
 
+  const saveLocation = () => {
+    const action = obj.firebaseKey ? updateLocation : createLocation;
+    const locationData = obj.firebaseKey ? { ...formInput, firebaseKey: obj.firebaseKey } : { ...formInput, uid: user.uid };
+
+    action(user.uid, locationData).then(({ name }) => {
+      if (!obj.firebaseKey) {
+        const patchPayload = { firebaseKey: name };
+        updateLocation(user.uid, name, patchPayload);
+      }
+      router.push(`/SavedLocations/${user.uid}`);
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (obj.firebaseKey) {
-      updateLocation(user.uid, obj.firebaseKey, formInput).then(() => router.push(`/SavedLocations/${user.uid}`));
-    } else {
-      const payload = { ...formInput, uid: user.uid };
-      createLocation(user.uid, payload).then(({ name }) => {
-        const patchPayload = { firebaseKey: name };
-        updateLocation(user.uid, name, patchPayload).then(() => {
-          router.push(`/SavedLocations/${user.uid}`);
+
+    // If the user wants to set this location as the default...
+    if (formInput.set_default_location) {
+      // ...Call updateDefaultLocation to ensure only one default location exists.
+      updateDefaultLocation(user.uid, formInput.firebaseKey)
+        .then(() => {
+          saveLocation();
+          // Remove the unessecary, undefined location.
+          deleteSingleLocation(user.uid, undefined);
+        })
+        .catch((error) => {
+          console.error('Error updating default location:', error);
         });
-      });
+    } else {
+      // If the user does not want to set this location as the default, just save the location.
+      saveLocation();
     }
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-
-  //   // Prepare location payload
-  //   const locationPayload = { ...formInput, uid: user.uid };
-
-  //   // Create or update the location first
-  //   const createOrUpdateLocation = obj.firebaseKey
-  //     ? updateLocation(user.uid, obj.firebaseKey, locationPayload)
-  //     : createLocation(user.uid, locationPayload).then(({ name }) => {
-  //         // After location creation, update the location with firebaseKey
-  //         const patchPayload = { firebaseKey: name };
-  //         return updateLocation(user.uid, name, patchPayload);
-  //       });
-
-  //   // Create the forecast only if we're creating a new location
-  //   const createForecast = obj.firebaseKey
-  //     ? Promise.resolve()  // No forecast creation if editing an existing location
-  //     : createOrUpdateLocation.then((locationData) => {
-  //         const forecastPayload = {
-  //           location_Id: locationData.firebaseKey || obj.firebaseKey, // Use the location's firebaseKey here
-  //           temperature: getRandomInt(100),
-  //           humidity: getRandomInt(100),
-  //           chance_of_rain: getRandomInt(100),
-  //           date: '12/1/2024',
-  //           icon: 'http://dummyimage.com/178x100.png/ff4444/ffffff',
-  //           // Add other forecast data as needed
-  //         };
-
-  //         return createNewForecast(forecastPayload); // Create forecast for new locations only
-  //       });
-
-  //   // Use Promise.all to wait for both the location and forecast to be submitted
-  //   Promise.all([createOrUpdateLocation, createForecast])
-  //     .then(() => {
-  //       // Navigate after both submissions succeed
-  //       router.push(`/SavedLocations/${user.uid}`);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error submitting location and forecast:", error);
-  //       // Handle the error appropriately (show a message to the user, etc.)
-  //     });
-  // };
+  // THIS IS WORKING BUT IT IS GIVING A PATCH 400 BAD REQUEST ERROR TOO FOR SOME REASON WHAT IS THAT ALL ABOUT??
 
   return (
     <Form onSubmit={handleSubmit} className="text-black">
