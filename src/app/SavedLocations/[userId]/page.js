@@ -10,23 +10,6 @@ function SavedLocationsPage() {
   const { user } = useAuth();
   const [locations, setLocations] = useState([]);
 
-  // const setUserLocations = () => {
-  //   getUserLocations(user.uid).then((data) => {
-  //     // Add the Firebase key to each location
-  //     const locationsWithKeys = Object.entries(data).map(([key, value]) => ({
-  //       ...value, // Spread the existing location data (e.g., id, name, etc.)
-  //       firebaseKey: key, // Add the Firebase key to the location object
-  //     }));
-  //     setLocations(locationsWithKeys); // Update state with locations that now include firebaseKey
-  //     console.log(locations);
-  //   });
-  // }; // SETS THE USERS LOCATIONS TO BE FILTERED LATER
-
-  // useEffect(() => {
-  //   setUserLocations();
-  //   console.log(locations);
-  // }, [user.uid]);
-
   const setUserLocations = () => {
     getUserLocations(user.uid).then((data) => {
       if (!data || Object.keys(data).length === 0) {
@@ -41,7 +24,6 @@ function SavedLocationsPage() {
       }));
 
       setLocations(locationsWithKeys);
-      console.log(locationsWithKeys);
     });
   }; // SETS THE USERS LOCATIONS TO BE FILTERED LATER
 
@@ -78,10 +60,6 @@ function SavedLocationsPage() {
         margin: '0 auto',
       }}
     >
-      {/* <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={setUserLocations}>
-        Test Locations
-      </Button> */}
-
       <Link href="/NewForecastLocation/new" passHref>
         <Button variant="danger" type="button" size="lg" className="copy-btn">
           Add New Forecast Location
@@ -98,7 +76,10 @@ function SavedLocationsPage() {
         <div>
           {Object.values(locations).map((location) => (
             <div key={location.firebaseKey}>
-              <h3>{location.name}</h3>
+              <h3>
+                {location.name} {location.set_default_location && '⭐'}{' '}
+              </h3>
+
               {/* Show the proper name of the location type depending on the number value of location.location_type */}
               {displayLocationTypeName(location.location_type)}
 

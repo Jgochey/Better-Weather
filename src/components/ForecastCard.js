@@ -20,19 +20,6 @@ export default function ForecastCard({ UserId }) {
   const [currentForecastInfo, setCurrentForecastInfo] = useState(null);
   const [currentForecastHumidity, setCurrentForecastHumidity] = useState(true);
   const [currentForecastCOR, setCurrentForecastCOR] = useState(true);
-  const [defaultLocation, setDefaultLocation] = useState(null);
-
-  // useEffect(() => {
-  //   if (user && user.uid) {
-  //     getUserLocations(user.uid).then((locations) => {
-  //       if (locations && typeof locations === 'object') {
-  //         setLocations(locations);
-  //       } else {
-  //         setLocations({}); // Make sure its an object.
-  //       }
-  //     });
-  //   }
-  // }, [user]);
 
   useEffect(() => {
     if (user && user.uid) {
@@ -58,7 +45,6 @@ export default function ForecastCard({ UserId }) {
     get3DayWeather(location.zipcode).then((forecast) => {
       setCurrentForecastInfo(forecast);
     });
-    console.log(currentForecastInfo);
   };
 
   // DEFAULT LOCATION HANDLING
@@ -66,16 +52,12 @@ export default function ForecastCard({ UserId }) {
     if (user && user.uid) {
       getUserLocations(user.uid)
         .then((locations) => {
-          // Check if locations is a valid object
           if (locations && typeof locations === 'object' && Object.keys(locations).length > 0) {
-            // Find the default location by searching for the location with set_default_location: true
+            // Check if locations is a valid object then, find the default location by searching for the location with set_default_location: true.
             const foundDefaultLocation = Object.values(locations).find((location) => location.set_default_location === true);
 
             if (foundDefaultLocation) {
-              // Update the state with the found default location
-              setDefaultLocation(foundDefaultLocation);
-
-              // Optionally, call handleLocationSelect to auto-select the default location and load weather data
+              // If a default location is found render the forecast cards.
               handleLocationSelect(foundDefaultLocation);
             } else {
               console.log('No default location found');
@@ -103,14 +85,6 @@ export default function ForecastCard({ UserId }) {
   // Convert the userLocations object to an array for rendering in the dropdown
   const locationArray = Object.values(userLocations);
 
-  const weatherTest = () => {
-    console.log(currentForecastInfo);
-  };
-
-  const defaultLocationTest = () => {
-    console.log(defaultLocation);
-  };
-
   return (
     <div>
       <Link href={`/SavedLocations/${UserId}`} passHref>
@@ -124,14 +98,6 @@ export default function ForecastCard({ UserId }) {
         <Dropdown.Toggle variant="success" id="dropdown-basic">
           Select Location
         </Dropdown.Toggle>
-
-        <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={weatherTest}>
-          Test Weather Data
-        </Button>
-
-        <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={defaultLocationTest}>
-          Test Default Location
-        </Button>
 
         <Dropdown.Menu>
           {locationArray.length === 0 ? (

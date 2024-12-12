@@ -72,11 +72,13 @@ function NewLocationForm({ obj = initialState }) {
     // If the user wants to set this location as the default...
     if (formInput.set_default_location) {
       // ...Call updateDefaultLocation to ensure only one default location exists.
+      deleteSingleLocation(user.uid, undefined);
+      // Remove any unessecary, undefined locations.
       updateDefaultLocation(user.uid, formInput.firebaseKey)
         .then(() => {
-          saveLocation();
-          // Remove the unessecary, undefined location.
           deleteSingleLocation(user.uid, undefined);
+          saveLocation();
+          // Check for undefined locations again and remove them.
         })
         .catch((error) => {
           console.error('Error updating default location:', error);
@@ -86,8 +88,6 @@ function NewLocationForm({ obj = initialState }) {
       saveLocation();
     }
   };
-
-  // THIS IS WORKING BUT IT IS GIVING A PATCH 400 BAD REQUEST ERROR TOO FOR SOME REASON WHAT IS THAT ALL ABOUT??
 
   return (
     <Form onSubmit={handleSubmit} className="text-black">
@@ -100,7 +100,7 @@ function NewLocationForm({ obj = initialState }) {
 
       {/* ZIPCODE INPUT  */}
       <FloatingLabel controlId="floatingInput2" label="Location Zipcode" className="mb-3">
-        <Form.Control type="text" placeholder="Enter Zipcode" name="zipcode" value={formInput.zipcode} onChange={handleChange} required />
+        <Form.Control type="text" placeholder="Enter Zipcode" name="zipcode" value={formInput.zipcode} onChange={handleChange} required pattern="\d{5}" title="Please entre a valid 5-digit zipcode." />
       </FloatingLabel>
 
       {/* SHOW HUMIDITY INPUT  */}
