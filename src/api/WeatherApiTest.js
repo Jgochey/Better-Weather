@@ -1,6 +1,6 @@
 // Save this for later
 
-const endpoint = 'http://api.weatherapi.com/v1';
+const endpoint = 'https://api.weatherapi.com/v1';
 
 const getWeather = (location) =>
   new Promise((resolve, reject) => {
