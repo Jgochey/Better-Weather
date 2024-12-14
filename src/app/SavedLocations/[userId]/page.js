@@ -66,7 +66,7 @@ function SavedLocationsPage() {
         </Button>
       </Link>
 
-      <Link href="/Forecasts" passHref>
+      <Link href="/" passHref>
         <Button variant="primary" className="m-2">
           Return to Forecast
         </Button>
@@ -91,10 +91,6 @@ function SavedLocationsPage() {
                 {' '}
                 Delete{' '}
               </Button>
-
-              {/* if set_default_location === true {
-                icon star
-              } */}
             </div>
           ))}
         </div>

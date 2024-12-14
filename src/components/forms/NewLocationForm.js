@@ -8,7 +8,6 @@ import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { useAuth } from '../../utils/context/authContext';
 import { createLocation, deleteSingleLocation, getLocationTypes, getUserLocations, updateDefaultLocation, updateLocation } from '../../api/userData';
-// import { createNewForecast } from '../../api/forecastData';
 
 const initialState = {
   name: '',
@@ -17,7 +16,6 @@ const initialState = {
   show_chance_of_rain: true,
   set_default_location: false,
   location_type: 1,
-  // firebaseKey: null,
 };
 
 function NewLocationForm({ obj = initialState }) {

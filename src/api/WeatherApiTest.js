@@ -1,5 +1,3 @@
-// Save this for later
-
 const endpoint = 'https://api.weatherapi.com/v1';
 
 const getWeather = (location) =>
