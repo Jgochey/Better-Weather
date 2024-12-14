@@ -102,7 +102,7 @@ function NewLocationForm({ obj = initialState }) {
       </FloatingLabel>
 
       {/* SHOW HUMIDITY INPUT  */}
-      <FloatingLabel controlId="floatingInput3" label="Show Humidity" className="mb-3">
+      <FloatingLabel controlId="floatingInput3" label="" className="mb-3">
         <Form.Check
           className="text-white mb-3"
           type="switch"
@@ -120,7 +120,7 @@ function NewLocationForm({ obj = initialState }) {
       </FloatingLabel>
 
       {/* SHOW CHANCE OF RAIN INPUT  */}
-      <FloatingLabel controlId="floatingInput4" label="Show Chance of Rain" className="mb-3">
+      <FloatingLabel controlId="floatingInput4" label="" className="mb-3">
         <Form.Check
           className="text-white mb-3"
           type="switch"
@@ -138,7 +138,7 @@ function NewLocationForm({ obj = initialState }) {
       </FloatingLabel>
 
       {/* SET DEFAULT LOCATION INPUT  */}
-      <FloatingLabel controlId="floatingInput5" label="Set Default Location" className="mb-3">
+      <FloatingLabel controlId="floatingInput5" label="" className="mb-3">
         <Form.Check
           className="text-white mb-3"
           type="switch"
@@ -169,7 +169,9 @@ function NewLocationForm({ obj = initialState }) {
       </FloatingLabel>
 
       {/* SUBMIT BUTTON  */}
-      <Button type="submit">{obj.firebaseKey ? 'Update' : 'Create'} Location</Button>
+      <Button type="submit" style={{ background: '#bc6c25', borderColor: '#bc6c25' }}>
+        {obj.firebaseKey ? 'Update' : 'Save'} Location
+      </Button>
     </Form>
   );
 }

@@ -1,4 +1,81 @@
 body {
-  background: black;
+  background: #283618;
   color: white;
+}
+
+.navbar {
+  background-color: #606c38;
+}
+
+.nav-link {
+  color: #ffffff;
+  font-size: 25px;
+}
+
+.forecastoptions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+}
+
+.allforecasts {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+}
+
+.primaryForecast {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+
+}
+
+/* .secondaryForecasts {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  margin-top: 500px;
+} */
+
+
+/* .primaryForecast {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px; 
+} */
+
+.secondaryForecasts {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* Add some space between the cards */
+}
+
+.upcoming {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  height: 105px;
+}
+
+.custom-dropdown-menu {
+  width: 400px;
+}
+
+.custom-dropdown-item {
+  height: 100px;
+  font-size: 35px;
+  display: flex;
+  align-items: center;
+}
+
+.savedlocationcard {
+  width: 500px;
 }

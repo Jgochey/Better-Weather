@@ -74,12 +74,12 @@ export default function ForecastCard({ UserId }) {
 
   const displayLocationTypeName = () => {
     if (currentLocationType === 0) {
-      return <div>Location Type: City </div>;
+      return <div style={{ background: '#ffffff' }}>City </div>;
     }
     if (currentLocationType === 1) {
-      return <div>Location Type: Rural </div>;
+      return <div style={{ background: '#ffffff' }}>Rural </div>;
     }
-    return <div>Location Type: Other </div>;
+    return <div style={{ background: '#ffffff' }}>Other </div>;
   };
 
   // Convert the userLocations object to an array for rendering in the dropdown
@@ -87,64 +87,67 @@ export default function ForecastCard({ UserId }) {
 
   return (
     <div>
-      <Link href={`/SavedLocations/${UserId}`} passHref>
-        <Button variant="primary" className="m-2">
-          View Saved Locations
-        </Button>
-      </Link>
+      <div className="forecastoptions">
+        <Link href={`/SavedLocations/${UserId}`} passHref>
+          <Button variant="primary" className="m-2" style={{ width: '400px', height: '100px', alignSelf: 'center', background: '#bc6c25', borderColor: '#bc6c25', fontSize: '35px' }}>
+            View Saved Locations
+          </Button>
+        </Link>
 
-      {/* Saved Locations Dropdown Menu */}
-      <Dropdown>
-        <Dropdown.Toggle variant="success" id="dropdown-basic">
-          Select Location
-        </Dropdown.Toggle>
+        {/* Saved Locations Dropdown Menu */}
+        <Dropdown>
+          <Dropdown.Toggle variant="success" id="dropdown-basic" style={{ width: '400px', height: '100px', alignSelf: 'center', background: '#ffffff', borderColor: '#ffffff', color: '#212121', fontSize: '35px', marginTop: '8px' }}>
+            Select Location
+          </Dropdown.Toggle>
 
-        <Dropdown.Menu>
-          {locationArray.length === 0 ? (
-            <Dropdown.Item disabled>No saved locations</Dropdown.Item>
-          ) : (
-            locationArray.map((location) => (
-              <Dropdown.Item key={location.firebaseKey} onClick={() => handleLocationSelect(location)}>
-                {location.name}
-              </Dropdown.Item>
-            ))
-          )}
-        </Dropdown.Menu>
-      </Dropdown>
+          <Dropdown.Menu className="custom-dropdown-menu">
+            {locationArray.length === 0 ? (
+              <Dropdown.Item disabled>No saved locations</Dropdown.Item>
+            ) : (
+              locationArray.map((location) => (
+                <Dropdown.Item className="custom-dropdown-item" key={location.firebaseKey} onClick={() => handleLocationSelect(location)}>
+                  {location.name}
+                </Dropdown.Item>
+              ))
+            )}
+          </Dropdown.Menu>
+        </Dropdown>
+      </div>
 
-      <div>
-        <h1>Forecast Data</h1>
+      <div className="allforecasts" style={{ width: '18rem', marginTop: '180px', scale: '150%' }}>
         {currentForecastInfo && currentForecastInfo.forecast && currentForecastInfo.forecast.forecastday && currentForecastInfo.forecast.forecastday.length > 0 ? (
           <>
             <div className="primaryForecast">
-              <Card style={{ width: '18rem', margin: '10px' }}>
+              <Card style={{ width: '18rem', margin: '10px', background: '#606c38' }}>
                 <Card.Body>
                   {/* Accessing forecast for each day directly */}
                   <Card.Title>
-                    <div>Location Name: {currentLocationName}</div>
+                    {/* <h1>Today</h1> */}
+                    <div style={{ background: '#ffffff', fontSize: '50px' }}>{currentLocationName}</div>
                     {displayLocationTypeName()}
                   </Card.Title>
 
                   {/* For Day 1 */}
-                  <div>Date: {currentForecastInfo.current.last_updated}</div>
+                  <div style={{ background: '#dda15e' }}>Date: {currentForecastInfo.current.last_updated}</div>
                   <div>
-                    Icon: <img src={currentForecastInfo.current.condition.icon} alt={currentForecastInfo.current.condition.text} />
+                    <img src={currentForecastInfo.current.condition.icon} alt={currentForecastInfo.current.condition.text} />
                   </div>
-                  <div>Temperature: {currentForecastInfo.current.temp_f}°F</div>
+                  <div style={{ fontSize: '40px', background: '#dda15e' }}> {currentForecastInfo.current.temp_f}°F</div>
 
                   {/* Show only if humidity is set to true for this location */}
-                  {currentForecastHumidity && <div>Humidity: {currentForecastInfo.current.humidity}%</div>}
+                  {currentForecastHumidity && <div style={{ background: '#dda15e' }}>Humidity: {currentForecastInfo.current.humidity}%</div>}
 
                   {/* Show only if chance of rain is set to true for this location */}
-                  {currentForecastCOR && <div>Chance of Rain: {currentForecastInfo.forecast.forecastday[0].day.daily_chance_of_rain}%</div>}
+                  {currentForecastCOR && <div style={{ background: '#dda15e' }}>Chance of Rain: {currentForecastInfo.forecast.forecastday[0].day.daily_chance_of_rain}%</div>}
                 </Card.Body>
               </Card>
             </div>
 
-            <div>Upcoming Weather</div>
-
-            <div className="secondaryForecasts">
-              <Card style={{ width: '18rem', margin: '10px' }}>
+            <h1 className="upcoming" style={{ background: '#dda15e', color: '#090909', fontSize: '40px' }}>
+              Upcoming Weather
+            </h1>
+            <div className="secondaryForecasts" style={{ background: '#283618' }}>
+              <Card style={{ width: '18rem', margin: '10px', background: '#dda15e' }}>
                 <Card.Body>
                   <Card.Title>
                     <h1> Tomorrow </h1>
@@ -152,36 +155,34 @@ export default function ForecastCard({ UserId }) {
                   </Card.Title>
 
                   <div>
-                    Icon: <img src={currentForecastInfo.forecast.forecastday[1].day.condition.icon} alt="weather icon" />
+                    <img src={currentForecastInfo.forecast.forecastday[1].day.condition.icon} alt="weather icon" />
                   </div>
-                  <div>Temperature: {currentForecastInfo.forecast.forecastday[1].day.avgtemp_f}°F</div>
+                  <div style={{ fontSize: '40px', background: '#996f41', color: '#ffffff' }}>{currentForecastInfo.forecast.forecastday[1].day.avgtemp_f}°F</div>
 
                   {/* Show only if humidity is set to true for this location */}
-                  {currentForecastHumidity && <div>Humidity: {currentForecastInfo.forecast.forecastday[1].day.avghumidity}%</div>}
+                  {currentForecastHumidity && <div style={{ background: '#996f41', color: '#ffffff' }}>Humidity: {currentForecastInfo.forecast.forecastday[1].day.avghumidity}%</div>}
 
                   {/* Show only if chance of rain is set to true for this location */}
-                  {currentForecastCOR && <div>Chance of Rain: {currentForecastInfo.forecast.forecastday[1].day.daily_chance_of_rain}%</div>}
-                  <div>{displayLocationTypeName()}</div>
+                  {currentForecastCOR && <div style={{ background: '#996f41', color: '#ffffff' }}>Chance of Rain: {currentForecastInfo.forecast.forecastday[1].day.daily_chance_of_rain}%</div>}
                 </Card.Body>
               </Card>
 
-              <Card style={{ width: '18rem', margin: '10px' }}>
+              <Card style={{ width: '18rem', margin: '10px', background: '#dda15e' }}>
                 <Card.Body>
                   <Card.Title>
                     <h1> In 2 Days </h1>
                     {/* For Day 3 */}
                   </Card.Title>
                   <div>
-                    Icon: <img src={currentForecastInfo.forecast.forecastday[2].day.condition.icon} alt="weather icon" />
+                    <img src={currentForecastInfo.forecast.forecastday[2].day.condition.icon} alt="weather icon" />
                   </div>
-                  <div>Temperature: {currentForecastInfo.forecast.forecastday[2].day.avgtemp_f}°F</div>
+                  <div style={{ fontSize: '40px', background: '#996f41', color: '#ffffff' }}> {currentForecastInfo.forecast.forecastday[2].day.avgtemp_f}°F</div>
 
                   {/* Show only if humidity is set to true for this location */}
-                  {currentForecastHumidity && <div>Humidity: {currentForecastInfo.forecast.forecastday[2].day.avghumidity}%</div>}
+                  {currentForecastHumidity && <div style={{ background: '#996f41', color: '#ffffff' }}>Humidity: {currentForecastInfo.forecast.forecastday[2].day.avghumidity}%</div>}
 
                   {/* Show only if chance of rain is set to true for this location */}
-                  {currentForecastCOR && <div>Chance of Rain: {currentForecastInfo.forecast.forecastday[2].day.daily_chance_of_rain}%</div>}
-                  <div>{displayLocationTypeName()}</div>
+                  {currentForecastCOR && <div style={{ background: '#996f41', color: '#ffffff' }}>Chance of Rain: {currentForecastInfo.forecast.forecastday[2].day.daily_chance_of_rain}%</div>}
                 </Card.Body>
               </Card>
             </div>
