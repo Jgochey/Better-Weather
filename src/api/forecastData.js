@@ -40,25 +40,6 @@ const getLocationsByLocationId = (locationId) =>
       .catch(reject);
   });
 
-// const getForecast = () =>
-//   new Promise((resolve, reject) => {
-//     fetch(`${endpoint}/forecasts/0.json`, {
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     })
-//       .then((response) => response.json())
-//       .then((data) => {
-//         if (data) {
-//           resolve(Object.values(data));
-//         } else {
-//           resolve([]);
-//         }
-//       })
-//       .catch(reject);
-//   });
-
 const getForecast = () =>
   new Promise((resolve, reject) => {
     fetch(`${endpoint}/forecasts/0.json`, {
@@ -97,25 +78,6 @@ const getForecastsAlternate = (locationId) =>
       })
       .catch(reject);
   });
-
-// const createNewForecast = () =>
-//   new Promise((resolve, reject) => {
-//     fetch(`${endpoint}/forecasts.json`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     })
-//       .then((response) => response.json())
-//       .then((data) => {
-//         if (data) {
-//           resolve(Object.values(data));
-//         } else {
-//           resolve([]);
-//         }
-//       })
-//       .catch(reject);
-//   });
 
 const createNewForecast = (forecastData) =>
   new Promise((resolve, reject) => {
