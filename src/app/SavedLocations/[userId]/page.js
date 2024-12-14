@@ -51,51 +51,58 @@ function SavedLocationsPage() {
   };
 
   return (
-    <div
-      className="text-center d-flex flex-column justify-content-center align-content-center"
-      style={{
-        height: '90vh',
-        padding: '30px',
-        maxWidth: '400px',
-        margin: '0 auto',
-      }}
-    >
-      <Link href="/NewForecastLocation/new" passHref>
-        <Button variant="danger" type="button" size="lg" className="copy-btn">
-          Add New Forecast Location
-        </Button>
-      </Link>
+    <>
+      <div
+        className="text-center d-flex flex-column justify-content-center align-content-center"
+        style={{
+          height: '90vh',
+          padding: '30px',
+          maxWidth: '400px',
+          margin: '0 auto',
+        }}
+      >
+        <Link href="/NewForecastLocation/new" passHref>
+          <Button variant="danger" type="button" size="lg" className="copy-btn" style={{ background: '#ffffff', borderColor: '#ffffff', color: '#1a1a1a' }}>
+            Add New Forecast Location
+          </Button>
+        </Link>
 
-      <Link href="/" passHref>
-        <Button variant="primary" className="m-2">
-          Return to Forecast
-        </Button>
-      </Link>
+        <Link href="/" passHref>
+          <Button variant="primary" className="m-2" style={{ background: '#dda15e', borderColor: '#dda15e', color: '#ffffff' }}>
+            Return to Forecast
+          </Button>
+        </Link>
+      </div>
 
-      <Card>
-        <div>
-          {Object.values(locations).map((location) => (
-            <div key={location.firebaseKey}>
-              <h3>
-                {location.name} {location.set_default_location && '⭐'}{' '}
-              </h3>
+      <div>
+        {/* <div style={{ background: '#606c38', marginBottom: '40px', border: '5px, solid, black' }}> */}
+        {/* <div > */}
+        {Object.values(locations).map((location) => (
+          <Card className="savedlocationcard" key={location.firebaseKey} style={{ background: '#606c38', marginBottom: '60px' }}>
+            <h3 style={{ color: '#ffffff' }}>
+              {location.name} {location.set_default_location && '⭐'}{' '}
+            </h3>
 
-              {/* Show the proper name of the location type depending on the number value of location.location_type */}
-              {displayLocationTypeName(location.location_type)}
+            {/* Show the proper name of the location type depending on the number value of location.location_type */}
+            <h3 style={{ color: '#ffffff' }}>{displayLocationTypeName(location.location_type)}</h3>
 
-              <Link href={`/NewForecastLocation/${user.uid}/edit/${location.firebaseKey}`} passHref>
-                <Button variant="info"> Edit </Button>
-              </Link>
-
-              <Button variant="danger" onClick={() => deleteSavedLocation(location)}>
+            <Link href={`/NewForecastLocation/${user.uid}/edit/${location.firebaseKey}`} passHref>
+              <Button variant="info" style={{ background: '#ffffff', borderColor: '#ffffff', color: '#1a1a1a', width: '100%' }}>
                 {' '}
-                Delete{' '}
+                Edit{' '}
               </Button>
-            </div>
-          ))}
-        </div>
-      </Card>
-    </div>
+            </Link>
+
+            <Button variant="danger" onClick={() => deleteSavedLocation(location)}>
+              {' '}
+              Delete{' '}
+            </Button>
+          </Card>
+        ))}
+        {/* </div> */}
+      </div>
+      {/* </div> */}
+    </>
   );
 }
 

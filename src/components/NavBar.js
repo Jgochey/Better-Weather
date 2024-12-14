@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import Link from 'next/link';
-import { Navbar, Container, Nav, Button } from 'react-bootstrap';
+import { Navbar, Container, Nav, Button, Image } from 'react-bootstrap';
 import { signOut } from '../utils/auth';
 import { useAuth } from '../utils/context/authContext';
 
@@ -10,10 +10,12 @@ export default function NavBar() {
   const UserId = user.uid;
 
   return (
-    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-      <Container>
+    <Navbar collapseOnSelect expand="lg" className="navbar">
+      <Container style={{ gap: '10px' }}>
         <Link passHref href="/" className="navbar-brand">
-          Better Weather
+          <Navbar.Brand>
+            <Image className="nav-img" style={{ width: '6.5rem' }} src="/images/logo.ico" />
+          </Navbar.Brand>
         </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
