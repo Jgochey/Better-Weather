@@ -42,12 +42,12 @@ function SavedLocationsPage() {
   const displayLocationTypeName = (locationType) => {
     // Displays the proper name of the location type depending on the value.
     if (locationType === 0 || locationType === '0') {
-      return <h3>Location Type: City </h3>;
+      return 'City';
     }
     if (locationType === 1 || locationType === '1') {
-      return <h3>Location Type: Rural </h3>;
+      return 'Rural';
     }
-    return <h3>Location Type: Other </h3>;
+    return 'Other';
   };
 
   return (
