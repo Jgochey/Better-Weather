@@ -52,15 +52,7 @@ function SavedLocationsPage() {
 
   return (
     <>
-      <div
-        className="text-center d-flex flex-column justify-content-center align-content-center"
-        style={{
-          height: '90vh',
-          padding: '30px',
-          maxWidth: '400px',
-          margin: '0 auto',
-        }}
-      >
+      <div className="text-center d-flex flex-column justify-content-center align-content-center newForecastOptions">
         <Link href="/NewForecastLocation/new" passHref>
           <Button variant="danger" type="button" size="lg" className="copy-btn" style={{ background: '#ffffff', borderColor: '#ffffff', color: '#1a1a1a' }}>
             Add New Forecast Location
@@ -74,11 +66,9 @@ function SavedLocationsPage() {
         </Link>
       </div>
 
-      <div>
-        {/* <div style={{ background: '#606c38', marginBottom: '40px', border: '5px, solid, black' }}> */}
-        {/* <div > */}
+      <div className="savedLocationsContainer">
         {Object.values(locations).map((location) => (
-          <Card className="savedlocationcard" key={location.firebaseKey} style={{ background: '#606c38', marginBottom: '60px' }}>
+          <Card className="savedlocationcard" key={location.firebaseKey} style={{ background: '#606c38' }}>
             <h3 style={{ color: '#ffffff' }}>
               {location.name} {location.set_default_location && '⭐'}{' '}
             </h3>
@@ -99,9 +89,7 @@ function SavedLocationsPage() {
             </Button>
           </Card>
         ))}
-        {/* </div> */}
       </div>
-      {/* </div> */}
     </>
   );
 }
