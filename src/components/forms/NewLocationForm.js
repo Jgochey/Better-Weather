@@ -51,17 +51,27 @@ function NewLocationForm({ obj = initialState }) {
     }));
   };
 
-  const saveLocation = () => {
-    const action = obj.firebaseKey ? updateLocation : createLocation;
-    const locationData = obj.firebaseKey ? { ...formInput } : { ...formInput, uid: user.uid };
+    const saveLocation = () => {
+    // If the firebasekey is already there then there must be something to update, otherwise this is a new creation.
+    const createOrUpdate = obj.firebaseKey ? updateLocation : createLocation;
+    const locationData = { ...formInput, uid: user.uid };
 
-    action(user.uid, obj.firebaseKey ? obj.firebaseKey : null, locationData).then(({ name }) => {
-      if (!obj.firebaseKey) {
-        const patchPayload = { firebaseKey: name };
-        updateLocation(user.uid, name, patchPayload);
-      }
-      router.push(`/SavedLocations/${user.uid}`);
-    });
+    createOrUpdate(user.uid, obj.firebaseKey ? obj.firebaseKey : locationData, locationData)
+      .then((response) => {
+        if (!obj.firebaseKey) {
+          // If there is no firebaseKey, give it one.
+          const { name } = response;
+          const patchPayload = { firebaseKey: name };
+          updateLocation(user.uid, name, patchPayload).then(() => {
+            router.push(`/SavedLocations/${user.uid}`);
+          });
+        } else {
+          router.push(`/SavedLocations/${user.uid}`);
+        }
+      })
+      .catch((error) => {
+        console.error('Error saving location:', error);
+      });
   };
 
   const handleSubmit = (e) => {
