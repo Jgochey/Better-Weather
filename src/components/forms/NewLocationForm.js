@@ -51,19 +51,6 @@ function NewLocationForm({ obj = initialState }) {
     }));
   };
 
-  // const saveLocation = () => {
-  //   const action = obj.firebaseKey ? updateLocation : createLocation;
-  //   const locationData = obj.firebaseKey ? { ...formInput, firebaseKey: obj.firebaseKey } : { ...formInput, uid: user.uid };
-
-  //   action(user.uid, locationData).then(({ name }) => {
-  //     if (!obj.firebaseKey) {
-  //       const patchPayload = { firebaseKey: name };
-  //       updateLocation(user.uid, name, patchPayload);
-  //     }
-  //     router.push(`/SavedLocations/${user.uid}`);
-  //   });
-  // };
-
   const saveLocation = () => {
     const action = obj.firebaseKey ? updateLocation : createLocation;
     const locationData = obj.firebaseKey ? { ...formInput } : { ...formInput, uid: user.uid };
